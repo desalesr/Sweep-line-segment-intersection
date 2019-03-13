@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - SweepLine",
+            "request": "launch",
+            "mainClass": "SweepLine",
+            "projectName": "Tarea02_60cdff74"
+        }
+    ]
+}
