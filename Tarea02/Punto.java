@@ -3,13 +3,15 @@ public class Punto implements Comparable<Punto> {
 	public double x;	//Coordenada x del Punto
 	public double y;	//Coordenada y del punto
 	public boolean isFirst; // True si es el punto de entrada o False si es el de salida.
-	public Segment segment; //Segmento asociado al punto  
+	public boolean isIntersection; //True si se trata de un punto de intersección
+	public Segmento segment; //Segmento asociado al punto  
 
 
 	public Punto(double x, double y) {
 		this.x = x;
 		this.y = y;
 		this.isFirst = true; //Valor por defecto pero se va a modificar cuando creemos su segmento asociado.
+		this.isIntersection = false; //Valor por default. Puede que sea intersección pero se debe comprobar. 
 		this.segment = null; 
 	}
 
@@ -34,12 +36,12 @@ public class Punto implements Comparable<Punto> {
 	}
 
 	/*Método que asocia un segmento a un punto.*/
-	public void setSegment(Segment segment) {
+	public void setSegment(Segmento segment) {
 		this.segment = segment;
 	}
 
 	/*Método que regresa el segmento asociado al punto */
-	public Segment getSegment(){
+	public Segmento getSegment(){
 		return this.segment;
 	}
 
@@ -52,12 +54,12 @@ public class Punto implements Comparable<Punto> {
 		/*En nuestra implementación, el barrido de línea se realizará de arriba hacia abajo, por lo que el orden en los puntos se realizará por medio de
 		las coordenadas y, ésto es, el más alto es el punto menor. En caso de tener coordenada y igual, consideremos que el de menor coordenada x será
 		el menor, pero este caso lo descartamos*/ 
-		if (this.equals(p)){
+		if (this.equals(p))
 			return 0;
-		}
-		if (this.y == p.y){ /*Este caso es considerado degenerado.*/
-			return (this.x < p.x)? -1 :	1; /*El más a la derecha es el menor */
-		}
+		
+		if (this.y == p.y) /*Este caso es considerado degenerado.*/
+			return (this.x < p.x)? -1 :	1; /*El más a la izquierda es el menor */
+		
 		return (this.y > p.y)? -1 : 1; /*Esta es la razón de orden descartando los casos degenerados */
 	}
 
@@ -70,7 +72,7 @@ public class Punto implements Comparable<Punto> {
 		if (turn == 0){
 			return 0;
 		} else if(turn > 0){
-			return -1 
+			return -1 ;
 		}
 		return 1;
 	} 

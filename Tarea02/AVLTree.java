@@ -528,39 +528,79 @@ public class AVLTree {
    */
 
     /*Metodo que regresa el vecino izquierdo de un nodo. Dicho nodo es el 
-    nodo menor del subárbol derecho (entre los grandes el más chido)*/ 
+    nodo mayor entre los menores */ 
     public AVLNode leftNeighbour(AVLNode node) {
        
         AVLNode ln = null;    
-        if(node == null) {  /*Si recibimos un nodo null*/
+        if(node == null || isIsolated(node)) {  /*Si recibimos un nodo null o aislado*/
             return ln;
         }
         ln = node.getLeft();
-        if(ln == null){ /*No hay nodos más pequeños que él*/
-            return node; 
-        }
-        while(ln != null){
-            ln = ln.getRight();
+        if(ln != null){ /*Si hay nodos más pequeños que él*/
+            while(ln != null)
+                ln = ln.getRight();
+            return ln;
+        } else { /*Buscamos hacia arriba*/
+            AVLNode ancestor = node.getParent();
+            if(ancestor == null)
+                return null; /*No hay nodos menores */
+            if(node.isRight()) {
+                return ancestor; /*Regresamos el padre*/
+            } else {//Está a la izquierda
+                while(ancestor.isLeft())
+                    ancestor = ancestor.getParent();
+                ln = ancestor.getParent();
+           }
         }
         return ln;
     }
 
     /*Metodo que regresa el vecino derecho de un nodo. Dicho nodo es el 
-    nodo mayor del subárbol izquierdo (entre los chicos el más grande)*/
+    nodo menor entre los mayores*/
     public AVLNode rightNeighbour(AVLNode node) {
         
         AVLNode rn = null;
-        if(node == null){ /*Si recibimos un nodo null */
+        if(node == null || isIsolated(node)) { /*Si recibimos un nodo null */
             return rn;
         }
         rn = node.getRight();
-        if(rn == null){
-            return node; /*No hau nodos más grandes que él */
-        }
-        while(rn != null) {
-            rn = rn.getLeft();
+        if(rn != null){
+            while(rn != null) 
+                rn = rn.getLeft(); /*El más chico de los más grandes*/ 
+            return rn;
+        } else {
+            AVLNode ancestor = node.getParent();
+            if (ancestor == null) 
+                return null;
+            if(node.isLeft()) {
+                return ancestor;
+            } else {
+                while(ancestor.isLeft())
+                    ancestor = ancestor.getParent();
+                rn = ancestor;
+            }
         }
         return rn;
     }
 
+    /*Método que nos ayuda a ver si un nodo es hijo derecho de su padre*/
+    private boolean isRight(AVLNode node) {
+        if(node == null || node.equals(getRoot())) //Si es la raíz o es un nodo null -> a fuerza tiene padre
+            return false;
+        AVLNode parent = node.getParent();
+        return parent.getRight().equals(node);
+    }
+
+    /*Método que nos ayuda a ver si un nodo es hijo izquierdo de su padre*/
+    private boolean isLeft(AVLNode node) {
+        if(node == null || node.equals(getRoot())) //Si es la raíz o es un nodo null -> a fuerza tiene padre 
+            return false;
+        AVLNode parent = node.getParent();
+        return parent.getLeft().equals(node);
+    }   
+    
+    /*Método que nos dice si se trata de un nodo aislado*/
+    private boolean isIsolated(AVLNode node) {
+        return node.getParent() == null && node.getLeft() == null && node.getRight() == null;
+    }
 }
