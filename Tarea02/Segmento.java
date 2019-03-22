@@ -57,14 +57,12 @@ public class Segmento extends AVLNode<Segmento> {
         }
         /*CASOS DEGENERADOS */
         /*El caso cuando la intersección es propia entre segmentos, pero son colineales*/ 
-        if (x1.turn(y1,x2) == 0 && x1.turn(y1,y2) == 0 && x2.turn(y2,x1) == 0 && x2.turn(y2,y1) == 0) {
-            if(y1.compareTo(x2) >=0){ /*Si las rectas se traslapan colinealmente o se intersectan en un extremo*/
+        if (x1.turn(y1,x2) == 0 && x1.turn(y1,y2) == 0 && x2.turn(y2,x1) == 0 && x2.turn(y2,y1) == 0) 
+            if(y1.compareTo(x2) >=0 || y2.compareTo(x1) >= 0)/*las rectas se traslapan colinealmente o se intersectan en un extremo*/
                 return true;
-            }
-        }
+            
         /*Caso cuando la intersección no es propia*/
 
-        /*Caso cuando coinciden en una coordenada*/
         
         return false;
     }	

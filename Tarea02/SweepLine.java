@@ -8,7 +8,7 @@ public class SweepLine {
 
 
     public static AVLTree stateLine = new AVLTree(); //Linea de barrido.
-    public static PriorityQueue<Punto> events = new PriorityQueue<>(); //eventos
+    //public static PriorityQueue<Punto> events = new PriorityQueue<>(); //eventos
     public static TreeSet<Punto> intersection = new TreeSet<>(); //Intersecciones encontradas -por comodidad-
     
     //Metodo que implementa el algoritmo de SweepLinea
@@ -16,7 +16,7 @@ public class SweepLine {
     //Asi saben si estan ordenando bien o mal o como va su algoritmo. 
 	public static void sweepLine(PriorityQueue<Punto> events) {
 
-        for(Punto event: events)
+        /*for(Punto event: events)
             stateLine.insert(event.segment); //Comentar abajo para probar sin algoritmo
         /*while(! pts.isEmpty())
             handleEvent(events.push());
@@ -26,12 +26,79 @@ public class SweepLine {
 
     }*/
 
+        while(! events.isEmpty()){ /*Mientras tengamos eventos a procesar */
+            Punto point = events.remove(0); /*Obtenemos el primer punto*/
+
+            if(point.isIntersection) { /*Si se trata de un punto de intersección*/
+                intersection.add(point); /*Reportammos que se trata de una intersección */
+
+                /*Obtenemos los segmentos que generan dicha intersección (de donde salió el punto) */
+                Segmento s1 = point.intersected1;
+                Segmento s2 = point.intersected2;
+
+                /*Recuperamos los nodos en el AVL de los segmentos para realizar los cálculos con los vecinos */
+                AVLNode nodeS1 = stateLine.search(s1);
+                AVLNode nodeS2 = stateLine.search(s2);
+
+                /*Recuperamos los segmentos vecinos de los nodos de los segmentos s1 y s2*/
+                //Segmento leftNeighbourS1 = (Segmento)stateLine.leftNeighbour(nodeS1);
+                Segmento rightNeighbourS1 = (Segmento)stateLine.rightNeighbour(nodeS1);
+                Segmento leftNeighbourS2 = (Segmento)stateLine.leftNeighbour(nodeS2);
+                //Segmento rightNeighbourS2 = (Segmento)stateLine.rightNeighbour(nodeS2);
+                
+                /*Pasamos a verificar si existe una intersección con los vecinos de los segmentos y el punto. 
+                En esta parte simulamos el swap, que en realidad no existe, sólo es una comparación cruzada*/
+                Punto inter; /*Ocuparemos la variable para todos los casos */
+                
+                if(leftNeighbourS2 != null) 
+                    inter = s1.getIntersection(leftNeighbourS2);
+                    if (inter != null)
+                        events.add(inter);
+                    
+                if(rightNeighbourS1 != null)
+                    inter = s2.getIntersection(rightNeighbourS1);
+                    if(inter != null)
+                        events.add(inter);
+            }
+
+            if(point.isFirst) {/*Si es un evento de entrada */
+                Segmento segmentPoint = point.segment; /*Recuperamos su segmento */
+                stateLine.insert(segmentpoint); /*Lo insertamos en el árbol (nuestra línea de estado) */
+                
+                /*Recuperamos vecinos del segmento que se encuentran en el árbol */
+                Segmento leftNeighbour = (Segmento)stateLine.leftNeighbour(segmentPoint);/*Izquierdo */
+                Segmento rightNeighbour = (Segmento)stateLine.rightNeighbour(segmentPoint);/*Derecho */
+
+                /*Calculamos puntos de intersección con dichos vecinos y si existen, los agregamos 
+                a nuestros eventos*/
+                Punto inter;
+                inter  = segmentPoint.getIntersection(leftNeighbour);
+                if(inter != null) 
+                    events.add(inter);
+                inter = segmentPoint.getIntersection(rightNeighbour);
+                if(inter != null)
+                    events.add(inter);
+            }
+
+            /*En este caso, se trata de un punto de salida de uno de los segmentos */
+
+            /*Recuperamos el nodo que tiene al punto */
+            AVLnode pointNode = stateLine.search(point.segment);
+            /*Recuperamos vecinos del segmento que se encuentran en el árbol */
+            Segmento leftNeighbour = (Segmento)stateLine.leftNeighbour(pointNode); 
+            Segmento rightNeighbour = (Segmento)stateLine.rightNeighbour(pointNode);/*Derecho */
+            stateLine.delete(point); /*Eliminamos el punto del árbol -línea de estado- */
+
+            /*Vemos si existe alguna intersección entre los vecinos -si existen- */
+            if(leftNeighbour != null && rightNeighbour != null && leftNeighbour.getIntersection(rightNeighbour) != null)
+                events.add(leftNeighbour.getIntersection(rightNeighbour));
+        }
     }
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
         sc.nextLine();
-        PriorityQueue<Punto> points = new PriorityQueue<>();
+        PriorityQueue<Punto> points = new PriorityQueue<>(); /*Usando una cola de prioridades no es necesario ordenar en cada inserción */
         for(int i = 0; i < n; i++) { /*Creamos los puntos*/
             String[] linea = sc.nextLine().split(" ");
             double x1 = Double.parseDouble(linea[0].trim());
@@ -62,12 +129,12 @@ public class SweepLine {
 
         } /*Termina construcción de puntos y segmentos*/ 
 
-        //Collections.sort(pts); /*Ordenamos los puntos de manera descendente*/ 
-        for(Punto p: events) {
+        //Collections.sort(pts); /*Ordenamos los puntos de manera descendente YA NO NECESARIO POR EL USO DE UNA COLA DE PRIORIDADES*/ 
+        /*for(Punto p: events) {
         	System.out.print("Punto (" + p.x + "," + p.y + ") -- segmento : ");
         	p.segment.imprime();
         	System.out.println();
-        }
+        }*/
 
         sweepLine(events);
         Segmento.print(stateLine.getRoot());

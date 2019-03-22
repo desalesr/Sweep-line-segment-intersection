@@ -535,21 +535,22 @@ public class AVLTree {
         if(node == null || isIsolated(node)) {  /*Si recibimos un nodo null o aislado*/
             return ln;
         }
+
         ln = node.getLeft();
         if(ln != null){ /*Si hay nodos más pequeños que él*/
-            while(ln != null)
+            while(ln.getRight() != null)
                 ln = ln.getRight();
             return ln;
         } else { /*Buscamos hacia arriba*/
             AVLNode ancestor = node.getParent();
             if(ancestor == null)
-                return null; /*No hay nodos menores */
+                return null; /*No puede haber nodos a la izquierda */
             if(node.isRight()) {
-                return ancestor; /*Regresamos el padre*/
+                return ancestor; /*Regresamos el padre, ya que el padre es el inmediato menor*/
             } else {//Está a la izquierda
                 while(ancestor.isLeft())
                     ancestor = ancestor.getParent();
-                ln = ancestor.getParent();
+                ln = ancestor.getParent(); /*aquí puede ser que hayamos encontrado que su padre es derecho o que sea la raíz*/
            }
         }
         return ln;
@@ -565,19 +566,19 @@ public class AVLTree {
         }
         rn = node.getRight();
         if(rn != null){
-            while(rn != null) 
+            while(rn.getLeft() != null) 
                 rn = rn.getLeft(); /*El más chico de los más grandes*/ 
             return rn;
         } else {
             AVLNode ancestor = node.getParent();
             if (ancestor == null) 
-                return null;
+                return null; /*No podemos hacer un recorrido buscando nodos mayores*/
             if(node.isLeft()) {
-                return ancestor;
+                return ancestor; /*El padre es el inmediatamente mayor*/
             } else {
-                while(ancestor.isLeft())
+                while(ancestor.isRight())
                     ancestor = ancestor.getParent();
-                rn = ancestor;
+                rn = ancestor.getParent(); /*Aquí puede serque hayamos encontrado que su padre es izqueirdo o que llegamos a la raiz */
             }
         }
         return rn;

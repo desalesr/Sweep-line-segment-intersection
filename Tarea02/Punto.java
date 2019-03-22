@@ -5,14 +5,18 @@ public class Punto implements Comparable<Punto> {
 	public boolean isFirst; // True si es el punto de entrada o False si es el de salida.
 	public boolean isIntersection; //True si se trata de un punto de intersección
 	public Segmento segment; //Segmento asociado al punto  
+	public Segmento intersected1; //Uno de los segmentos que provoca la intersección
+	public Segmento intersected2; //El otro de los segmentos que provoca la intersección
 
 
 	public Punto(double x, double y) {
 		this.x = x;
 		this.y = y;
 		this.isFirst = true; //Valor por defecto pero se va a modificar cuando creemos su segmento asociado.
-		this.isIntersection = false; //Valor por default. Puede que sea intersección pero se debe comprobar. 
+		this.isIntersection = false; //Valor por default. Puede que sea intersección pero se debe comprobar -en caso de ser punto de inter-. 
 		this.segment = null; 
+		this.intersected1 = null;
+		this.intersected2 = null;
 	}
 
 	public boolean equals(Punto p) {
@@ -26,6 +30,9 @@ public class Punto implements Comparable<Punto> {
 	public Punto difference(Punto p) {
 		return new Punto(this.x-p.x, this.y-p.y);
 	}  
+
+	/*----Los métodos set y get en la implementación no son necesarios, pero para buenas practicas obedeciendo el paradigma los ponemos.
+	Tan sólo volver todos los atributos privados en lugar de públicos y así les daremos el uso correcto---*/
 
 	public double getX(){
 		return this.x;
@@ -45,6 +52,23 @@ public class Punto implements Comparable<Punto> {
 		return this.segment;
 	}
 
+	/*Métood que asocia al punto el segmento1 que lo intersecta */
+	public void setIntersectedSegment1(Segmento s){
+		this.intersected1 = s;
+	}
+	/*Método que regresa el segmento1 que intersecta al punto*/
+	public Segmento getIntersected1(){
+		return this.intersected1;
+	}
+
+	/*Método que asocia al punto el segmento2 que lo intersecta */
+	public void setIntersectedSegment2(Segmento s) {
+		this.intersected2 = s;
+	}
+	/*Método que regresa el segmento2 que intersecta al punto*/
+	public Segmento getIntersected2(){
+		return this.intersected2;
+	}
 	//Metodo para ordenar los puntos
 	//Necesario para que los eventos esten ordenados. 
 	//Deben ser coherentes con su orden, es decir si el orden que quieren para sus eventos es de arriba hacia abajo
@@ -56,10 +80,8 @@ public class Punto implements Comparable<Punto> {
 		el menor, pero este caso lo descartamos*/ 
 		if (this.equals(p))
 			return 0;
-		
 		if (this.y == p.y) /*Este caso es considerado degenerado.*/
-			return (this.x < p.x)? -1 :	1; /*El más a la izquierda es el menor */
-		
+			return (this.x < p.x)? -1 :	1; /*El más a la izquierda es el menor */		
 		return (this.y > p.y)? -1 : 1; /*Esta es la razón de orden descartando los casos degenerados */
 	}
 
@@ -71,14 +93,14 @@ public class Punto implements Comparable<Punto> {
 		double turn = (((p2.getX() - this.getX()) * (p3.getY()- this.getY())) - (((p2.getY() - this.getY())) * ((p3.getX() - this.getX()))));
 		if (turn == 0){
 			return 0;
-		} else if(turn > 0){
+		} else if(turn > 0){ //REVISAR ASIGNACIONES	
 			return -1 ;
 		}
 		return 1;
 	} 
 
 	//auxiliar para imprimir un punto.
-	public void imprime() {
+	public void imprime() { //
 		System.out.print("(" + this.x + "," + this.y + ")");
 	}
 
