@@ -545,10 +545,10 @@ public class AVLTree {
             AVLNode ancestor = node.getParent();
             if(ancestor == null)
                 return null; /*No puede haber nodos a la izquierda */
-            if(node.isRight()) {
+            if(isRight(node)) {
                 return ancestor; /*Regresamos el padre, ya que el padre es el inmediato menor*/
             } else {//Está a la izquierda
-                while(ancestor.isLeft())
+                while(isLeft(ancestor))
                     ancestor = ancestor.getParent();
                 ln = ancestor.getParent(); /*aquí puede ser que hayamos encontrado que su padre es derecho o que sea la raíz*/
            }
@@ -573,10 +573,10 @@ public class AVLTree {
             AVLNode ancestor = node.getParent();
             if (ancestor == null) 
                 return null; /*No podemos hacer un recorrido buscando nodos mayores*/
-            if(node.isLeft()) {
+            if(isLeft(node)) {
                 return ancestor; /*El padre es el inmediatamente mayor*/
             } else {
-                while(ancestor.isRight())
+                while(isRight(ancestor))
                     ancestor = ancestor.getParent();
                 rn = ancestor.getParent(); /*Aquí puede serque hayamos encontrado que su padre es izqueirdo o que llegamos a la raiz */
             }

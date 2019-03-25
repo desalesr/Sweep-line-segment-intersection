@@ -1,3 +1,4 @@
+
 public class Punto implements Comparable<Punto> {
 
 	public double x;	//Coordenada x del Punto
@@ -88,17 +89,12 @@ public class Punto implements Comparable<Punto> {
 	//Metodo necesario para determinar el sentido de 3 puntos. necesario para saber si 2 segmentos se intersectan.
 	//Elegir un representante para direccion y facilita mas las cosas.
 	//0 para colineales, 1 para derecha y -1 para izquierda 
-	//Se toma como referencia el punto que llama al método para determinar la dirección
-	public int turn(Punto p2, Punto p3) {
-		double turn = (((p2.getX() - this.getX()) * (p3.getY()- this.getY())) - (((p2.getY() - this.getY())) * ((p3.getX() - this.getX()))));
-		if (turn == 0){
+	public static int turn(Punto a, Punto b, Punto c) {
+		double turn = (((c.getX() - b.getX()) * (b.getY()- a.getY())) - (((b.getX() - a.getX())) * ((c.getY() - b.getY()))));
+		if (turn == 0)
 			return 0;
-		} else if(turn > 0){ //REVISAR ASIGNACIONES	
-			return -1 ;
-		}
-		return 1;
+		return (turn < 0)? -1 : 1;
 	} 
-
 	//auxiliar para imprimir un punto.
 	public void imprime() { //
 		System.out.print("(" + this.x + "," + this.y + ")");
